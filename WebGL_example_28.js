@@ -132,9 +132,9 @@ var textureCoords = [
 
           // Front face
           0.0, 0.0,
-         	6.0, 0.0,
-          6.0, 6.0,
-          0.0, 6.0,
+         	0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
 
           // Back face
           1.0, 0.0,
@@ -220,7 +220,7 @@ function initTexture() {
 		handleLoadedTexture(webGLTexture)
 	}
 
-	webGLTexture.image.src = "NeHe.gif";
+	webGLTexture.image.src = "checkers_board2.gif";
 }
 
 //----------------------------------------------------------------------------
