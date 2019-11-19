@@ -40,7 +40,7 @@ var tz = 0.0;
 
 // The rotation angles in degrees
 
-var angleXX = 0.0;
+var angleXX = 55.0;
 
 var angleYY = 0.0;
 
@@ -56,19 +56,19 @@ var sz = 0.25;
 
 // NEW - Animation controls
 
-var rotationXX_ON = 1;
+var rotationXX_ON = 0;
 
 var rotationXX_DIR = 1;
 
 var rotationXX_SPEED = 1;
  
-var rotationYY_ON = 1;
+var rotationYY_ON = 0;
 
 var rotationYY_DIR = 1;
 
 var rotationYY_SPEED = 1;
  
-var rotationZZ_ON = 1;
+var rotationZZ_ON = 0;
 
 var rotationZZ_DIR = 1;
 
@@ -88,40 +88,40 @@ var projectionType = 0;
 
 vertices = [
             // Front face
-            -1.0, -1.0,  1.0,
-             1.0, -1.0,  1.0,
-             1.0,  1.0,  1.0,
-            -1.0,  1.0,  1.0,
+            -4.0, -2.0,  -2.0,
+             4.0, -2.0,  -2.0,               // -6 é para os vertices mais profundos, -2 para os menos
+             4.0,  6.0,  -2.0,
+            -4.0,  6.0,  -2.0,
 
             // Back face
-            -1.0, -1.0, -1.0,
-            -1.0,  1.0, -1.0,
-             1.0,  1.0, -1.0,
-             1.0, -1.0, -1.0,
+            -4.0, -2.0, -6.0,
+            -4.0,  6.0, -6.0,
+             4.0,  6.0, -6.0,
+             4.0, -2.0, -6.0,
 
             // Top face
-            -1.0,  1.0, -1.0,
-            -1.0,  1.0,  1.0,
-             1.0,  1.0,  1.0,
-             1.0,  1.0, -1.0,
+            -4.0,  6.0, -6.0,
+            -4.0,  6.0,  -2.0,
+             4.0,  6.0,  -2.0,
+             4.0,  6.0, -6.0,
 
             // Bottom face
-            -1.0, -1.0, -1.0,
-             1.0, -1.0, -1.0,
-             1.0, -1.0,  1.0,
-            -1.0, -1.0,  1.0,
+            -4.0, -2.0, -6.0,
+             4.0, -2.0, -6.0,
+             4.0, -2.0,  -2.0,
+            -4.0, -2.0,  -2.0,
 
             // Right face
-             1.0, -1.0, -1.0,
-             1.0,  1.0, -1.0,
-             1.0,  1.0,  1.0,
-             1.0, -1.0,  1.0,
+             4.0, -2.0, -6.0,
+             4.0,  6.0, -6.0,
+             4.0,  6.0,  -2.0,
+             4.0, -2.0,  -2.0,
 
             // Left face
-            -1.0, -1.0, -1.0,
-            -1.0, -1.0,  1.0,
-            -1.0,  1.0,  1.0,
-            -1.0,  1.0, -1.0
+            -4.0, -2.0, -6.0,
+            -4.0, -2.0, -2.0,
+            -4.0,  6.0, -2.0,
+            -4.0,  6.0, -6.0
 ];
 
 // Texture coordinates for the quadrangular faces
@@ -131,40 +131,78 @@ vertices = [
 var textureCoords = [
 
           // Front face
-          0.0, 0.0,
-         	0.0, 0.0,
-          0.0, 0.0,
-          0.0, 0.0,
-
-          // Back face
-          1.0, 0.0,
           1.0, 1.0,
+          1.0, 0.0,
+          0.0, 0.0,
           0.0, 1.0,
+
+           // Back face
+          0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
           0.0, 0.0,
 
           // Top face
-          0.0, 1.0,
           0.0, 0.0,
-          1.0, 0.0,
-          1.0, 1.0,
+          0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
 
           // Bottom face
-          1.0, 1.0,
-          0.0, 1.0,
           0.0, 0.0,
-          1.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
 
           // Right face
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
+          0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0,
           0.0, 0.0,
 
           // Left face
           0.0, 0.0,
-          1.0, 0.0,
-          1.0, 1.0,
-          0.0, 1.0,
+          0.0, 0.0,
+          0.0, 0.0,
+          0.0, 0.0, 
+];
+var textureCoords2 = [
+
+ 	// Front face
+	0.0, 0.0,
+	0.0, 0.0,
+	0.0, 0.0,
+	0.0, 0.0, 
+
+	// Back face
+	1.0, 0.0,
+	1.0, 1.0,
+	0.0, 1.0,
+	0.0, 0.0,
+
+	// Top face
+	0.0, 1.0,
+	0.0, 0.0,
+	1.0, 0.0,
+	1.0, 1.0,
+
+	// Bottom face
+	1.0, 1.0,
+	0.0, 1.0,
+	0.0, 0.0,
+	1.0, 0.0,
+
+	// Right face
+	1.0, 0.0,
+	1.0, 1.0,
+	0.0, 1.0,
+	0.0, 0.0,
+
+	// Left face
+	0.0, 0.0,
+	1.0, 0.0,
+	1.0, 1.0,
+	0.0, 1.0,
 ];
 
 // Vertex indices defining the triangles
@@ -211,8 +249,11 @@ function handleLoadedTexture(texture) {
 
 
 var webGLTexture;
+var webGLTextureWood;
 
 function initTexture() {
+
+	images = ["checkers_board2.gif","wood2.gif"]
 	
 	webGLTexture = gl.createTexture();
 	webGLTexture.image = new Image();
@@ -221,6 +262,17 @@ function initTexture() {
 	}
 
 	webGLTexture.image.src = "checkers_board2.gif";
+
+	webGLTextureWood = gl.createTexture();
+	webGLTextureWood.image = new Image();
+	webGLTextureWood.image.onload = function () {
+		handleLoadedTexture(webGLTextureWood)
+	}
+
+	webGLTextureWood.image.src = "wood2.gif";
+
+	
+	
 }
 
 //----------------------------------------------------------------------------
@@ -238,12 +290,17 @@ function initBuffers() {
 	cubeVertexPositionBuffer.numItems = vertices.length / 3;			
 
 	// Textures
-		
     cubeVertexTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
  	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
     cubeVertexTextureCoordBuffer.itemSize = 2;
-    cubeVertexTextureCoordBuffer.numItems = 24;			
+	cubeVertexTextureCoordBuffer.numItems = 24;
+	// other texture
+	cubeVertexTextureCoordBuffer1 = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer1);
+ 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords2), gl.STATIC_DRAW);
+    cubeVertexTextureCoordBuffer1.itemSize = 2;
+    cubeVertexTextureCoordBuffer1.numItems = 24;
 
 	// Vertex indices
 	
@@ -286,7 +343,11 @@ function drawModel( angleXX, angleYY, angleZZ,
     	
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
     
-    gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+	
+	// The vertex indices
+    
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
 
 	// NEW --- Textures
 	
@@ -296,15 +357,25 @@ function drawModel( angleXX, angleYY, angleZZ,
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, webGLTexture);
         
-    gl.uniform1i(shaderProgram.samplerUniform, 0);
+	gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+	gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
+	
+	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer1);
+    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer1.itemSize, gl.FLOAT, false, 0, 0);
+	
+	
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindTexture(gl.TEXTURE_2D, webGLTextureWood);
+        
+    gl.uniform1i(shaderProgram.samplerUniform, 1);
     
-    // The vertex indices
     
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
 
 	// Drawing the triangles --- NEW --- DRAWING ELEMENTS 
 	
-	gl.drawElements(gl.TRIANGLES, cubeVertexIndexBuffer.numItems, gl.UNSIGNED_SHORT, 0);	
+	gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);	
 }
 
 //----------------------------------------------------------------------------
@@ -365,13 +436,13 @@ function drawScene() {
 	
 	drawModel( -angleXX, angleYY, angleZZ, 
 	           sx, sy, sz,
-	           tx + 0.5, ty + 0.5, tz,
+	           tx,ty, tz,
 	           mvMatrix,
 	           primitiveType );
 	           	       
 	// Instance 2 --- LEFT TOP
 	
-	drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
+	/* drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
 	           sx, sy, sz,
 	           tx - 0.5, ty + 0.5, tz,
 	           mvMatrix,
@@ -391,7 +462,7 @@ function drawScene() {
 	           sx, sy, sz,
 	           tx - 0.5, ty - 0.5, tz,
 	           mvMatrix,
-	           primitiveType );
+	           primitiveType ); */
 	           
 }
 
