@@ -27,6 +27,11 @@ var cubeVertexPositionBuffer = null;
 var cubeVertexIndexBuffer = null;
 
 var cubeVertexTextureCoordBuffer;
+var DamaVertexPositionBuffer = null;
+
+var DamaVertexIndexBuffer = null;
+
+var DamaVertexTextureCoordBuffer;
 
 // The global transformation parameters
 
@@ -40,7 +45,7 @@ var tz = 0.0;
 
 // The rotation angles in degrees
 
-var angleXX = 55.0;
+var angleXX = 65.0;
 
 var angleYY = 0.0;
 
@@ -80,7 +85,7 @@ var primitiveType = null;
  
 // To allow choosing the projection type
 
-var projectionType = 0;
+var projectionType = 1;
  
 // From learningwebgl.com
 
@@ -122,6 +127,44 @@ vertices = [
             -4.0, -2.0, -2.0,
             -4.0,  6.0, -2.0,
             -4.0,  6.0, -6.0
+];
+
+verticesDama = [
+	// Front face
+	-2.0, -1.0,  -1.0,
+	 2.0, -1.0,  -1.0,               // -6 é para os vertices mais profundos, -2 para os menos
+	 2.0,  3.0,  -1.0,
+	-2.0,  3.0,  -1.0,
+
+	// Back face
+	-2.0, -1.0, -3.0,
+	-2.0,  3.0, -3.0,
+	 2.0,  3.0, -3.0,
+	 2.0, -1.0, -3.0,
+
+	// Top face
+	-2.0,  3.0, -3.0,
+	-2.0,  3.0,  -1.0,
+	 2.0,  3.0,  -1.0,
+	 2.0,  3.0, -3.0,
+
+	// Bottom face
+	-2.0, -1.0, -3.0,
+	 2.0, -1.0, -3.0,
+	 2.0, -1.0,  -1.0,
+	-2.0, -1.0,  -1.0,
+
+	// Right face
+	 2.0, -1.0, -3.0,
+	 2.0,  3.0, -3.0,
+	 2.0,  3.0,  -1.0,
+	 2.0, -1.0,  -1.0,
+
+	// Left face
+	-2.0, -1.0, -3.0,
+	-2.0, -1.0, -1.0,
+	-2.0,  3.0, -1.0,
+	-2.0,  3.0, -3.0
 ];
 
 // Texture coordinates for the quadrangular faces
@@ -169,11 +212,10 @@ var textureCoords = [
 var textureCoords2 = [
 
  	// Front face
-	0.0, 0.0,
-	0.0, 0.0,
-	0.0, 0.0,
-	0.0, 0.0, 
-
+	 1.0, 1.0,
+	 1.0, 0.0,
+	 0.0, 0.0,
+	 0.0, 1.0,
 	// Back face
 	1.0, 0.0,
 	1.0, 1.0,
@@ -220,6 +262,20 @@ var cubeVertexIndices = [
             16, 17, 18,   16, 18, 19, // Right face
 
             20, 21, 22,   20, 22, 23  // Left face
+];
+var DamaVertexIndices = [
+
+	0, 1, 2,      0, 2, 3,    // Front face
+
+	4, 5, 6,      4, 6, 7,    // Back face
+
+	8, 9, 10,     8, 10, 11,  // Top face
+
+	12, 13, 14,   12, 14, 15, // Bottom face
+
+	16, 17, 18,   16, 18, 19, // Right face
+
+	20, 21, 22,   20, 22, 23  // Left face
 ];
          
          
@@ -287,20 +343,20 @@ function initBuffers() {
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 	cubeVertexPositionBuffer.itemSize = 3;
-	cubeVertexPositionBuffer.numItems = vertices.length / 3;			
+	cubeVertexPositionBuffer.numItems = vertices.length / 3;
+	// peça do tabuleiro
+	DamaVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, DamaVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verticesDama), gl.STATIC_DRAW);
+	DamaVertexPositionBuffer.itemSize = 3;
+	DamaVertexPositionBuffer.numItems = vertices.length / 3;
 
 	// Textures
     cubeVertexTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
- 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+ 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords2), gl.STATIC_DRAW);
     cubeVertexTextureCoordBuffer.itemSize = 2;
 	cubeVertexTextureCoordBuffer.numItems = 24;
-	// other texture
-	cubeVertexTextureCoordBuffer1 = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer1);
- 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords2), gl.STATIC_DRAW);
-    cubeVertexTextureCoordBuffer1.itemSize = 2;
-    cubeVertexTextureCoordBuffer1.numItems = 24;
 
 	// Vertex indices
 	
@@ -308,7 +364,8 @@ function initBuffers() {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
     cubeVertexIndexBuffer.itemSize = 1;
-    cubeVertexIndexBuffer.numItems = 36;
+	cubeVertexIndexBuffer.numItems = 36;
+
 }
 
 //----------------------------------------------------------------------------
@@ -342,12 +399,15 @@ function drawModel( angleXX, angleYY, angleZZ,
     // Passing the buffers
     	
 	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+	
     
 	gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, cubeVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+
 	
 	// The vertex indices
     
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeVertexIndexBuffer);
+	
 
 	// NEW --- Textures
 	
@@ -360,9 +420,6 @@ function drawModel( angleXX, angleYY, angleZZ,
 	gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 	gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
-	
-	gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer1);
-    gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer1.itemSize, gl.FLOAT, false, 0, 0);
 	
 	
 
@@ -438,8 +495,9 @@ function drawScene() {
 	           sx, sy, sz,
 	           tx,ty, tz,
 	           mvMatrix,
-	           primitiveType );
-	           	       
+			   primitiveType );
+			   
+	
 	// Instance 2 --- LEFT TOP
 	
 	/* drawModel( -angleXX, -angleYY, -angleZZ,  // CW rotations
