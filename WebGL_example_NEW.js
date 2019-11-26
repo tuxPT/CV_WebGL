@@ -29,6 +29,8 @@ var triangleVertexNormalBuffer = null;
 
 var globalAngleYY = 0.0;
 
+var globalAngleZZ = 0.0;
+
 var globalTz = 0.0;
 
 // GLOBAL Animation controls
@@ -38,6 +40,12 @@ var globalRotationYY_ON = 0;
 var globalRotationYY_DIR = 1;
 
 var globalRotationYY_SPEED = 1;
+
+var globalRotationZZ_ON = 1;
+
+var globalRotationZZ_DIR = 1;
+
+var globalRotationZZ_SPEED = 1;
 
 // To allow choosing the way of drawing the model triangles
 
@@ -63,8 +71,7 @@ var elapsedTime = 0;
 
 var frameCount = 0;
 
-var lastfpsTime = new Date().getTime();
-
+var lastfpsTime = new Date().getTime();;
 
 
 function countFrames() {
@@ -132,7 +139,7 @@ function initBuffers( model ) {
 			triangleVertexNormalBuffer.itemSize, 
 			gl.FLOAT, false, 0, 0);	
 
-	// Textures
+	/*// Textures
     triangleVertexTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexTextureCoordBuffer);
  	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.texture), gl.STATIC_DRAW);
@@ -174,8 +181,7 @@ function initTexture() {
 
 	webGLTextureWood.image.src = "wood2.gif";
 
-	
-	
+	*/
 }
 
 //----------------------------------------------------------------------------
@@ -203,7 +209,6 @@ function drawModel( model,
 	mvMatrix = mult( mvMatrix, scalingMatrix( model.sx, model.sy, model.sz ) );
 						 
 	// Passing the Model View Matrix to apply the current transformation
-	
 	var mvUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 	
 	gl.uniformMatrix4fv(mvUniform, false, new Float32Array(flatten(mvMatrix)));
@@ -275,7 +280,7 @@ function drawModel( model,
 		gl.drawArrays(primitiveType, 0, triangleVertexPositionBuffer.numItems); 
 		
 	}	
-
+/*
 	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexTextureCoordBuffer);
     gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, triangleVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -298,6 +303,7 @@ function drawModel( model,
 	// Drawing the triangles --- NEW --- DRAWING ELEMENTS 
 	
 	gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_SHORT, 0);
+*/
 }
 
 //----------------------------------------------------------------------------
@@ -348,7 +354,7 @@ function drawScene() {
 		
 		// Global transformation !!
 		
-		globalTz = -3;
+		globalTz = -2.5;
 
 		// NEW --- The viewer is on (0,0,0)
 		
@@ -374,8 +380,9 @@ function drawScene() {
 	
 	// GLOBAL TRANSFORMATION FOR THE WHOLE SCENE
 	
-	mvMatrix = mult(translationMatrix( 0, 0, globalTz ), rotationXXMatrix(-45));
-
+	mvMatrix = mult(mvMatrix, translationMatrix( 0, 0, globalTz ));
+	mvMatrix = mult(mvMatrix, rotationXXMatrix(-45));
+	mvMatrix = mult(mvMatrix, rotationZZMatrix(globalAngleZZ))
 
 	
 	// NEW - Updating the position of the light sources, if required
@@ -444,6 +451,11 @@ function animate() {
 
 			globalAngleYY += globalRotationYY_DIR * globalRotationYY_SPEED * (90 * elapsed) / 1000.0;
 	    }
+
+		if( globalRotationZZ_ON ) {
+
+			globalAngleZZ += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
+		}
 
 		// For every model --- Local rotations
 		
@@ -771,60 +783,18 @@ function initWebGL( canvas ) {
 
 //----------------------------------------------------------------------------
 
-async function runWebGL() {
+function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas");
-
-
-
 	canvas.width = 450;
 	canvas.height = 450;
 	initWebGL( canvas );
 
 	shaderProgram = initShaders( gl );
-
-	await fetch('cylinder.txt')
-		.then(function(response) {
-			return response.text()
-		})
-		.then(function(data) {
-			var tokens = data.split(/\s\s*/);
-
-			// Array of values; each value is a string
-
-			var numVertices = parseInt( tokens[0] );
-
-			// For every vertex we have 3 floating point values
-
-			var i, j;
-
-			var aux = 1;
-
-			var newVertices = [];
-
-			for( i = 0; i < numVertices; i++ ) {
-
-				for( j = 0; j < 3; j++ ) {
-
-					newVertices[ 3 * i + j ] = parseFloat( tokens[ aux++ ] );
-				}
-			}
-
-			// Assigning to the current mode
-			for(i=1; i<sceneModels.length; i++) {
-				sceneModels[i].vertices = newVertices.slice();
-
-				// NEW --- Computing the triangle normal vector for every vertex
-
-				computeVertexNormals(sceneModels[i].vertices, sceneModels[i].normals);
-			}
-			// To render the model just read
-
-			// RESET the transformations - NEED AUXILIARY FUNCTION !!
-		});
+	
 	setEventListeners();
 	
-	tick();		// A timer controls the rendering / animation
+	tick();		// A timer controls the rendering / animation    
 
 	outputInfos();
 }

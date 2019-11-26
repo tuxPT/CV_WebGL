@@ -45,9 +45,8 @@ for tt in triangles:
 
 triangles.extend(rectangles)
 
-print('{}\n\n'.format(len(triangles)*3))
+print('dama_vertices = [\n')
 for t in triangles:
-    print('{} {} {}\n'.format(t[0][0], t[0][1], t[0][2]))
-    print('{} {} {}\n'.format(t[1][0], t[1][1], t[1][2]))
-    print('{} {} {}\n\n'.format(t[2][0], t[2][1], t[2][2]))
+    print('  {}, {}, {},  {}, {}, {},  {}, {}, {},  '.format(t[0][0], t[0][1], t[0][2], t[1][0], t[1][1], t[1][2], t[2][0], t[2][1], t[2][2]))
+print(']')
 

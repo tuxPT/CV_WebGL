@@ -25,29 +25,29 @@ function emptyModelFeatures() {
 	// Transformation parameters
 
 	// Displacement vector
-
+	
 	this.tx = 0.0;
-
+	
 	this.ty = 0.0;
-
-	this.tz = 0.0;
-
-	// Rotation angles
-
+	
+	this.tz = 0.0;	
+	
+	// Rotation angles	
+	
 	this.rotAngleXX = 0.0;
-
+	
 	this.rotAngleYY = 0.0;
-
-	this.rotAngleZZ = 0.0;
+	
+	this.rotAngleZZ = 0.0;	
 
 	// Scaling factors
-
+	
 	this.sx = 1.0;
-
+	
 	this.sy = 1.0;
-
-	this.sz = 1.0;
-
+	
+	this.sz = 1.0;		
+	
 	// Animation controls
 
 	this.rotXXOn = false;
@@ -57,24 +57,24 @@ function emptyModelFeatures() {
 	this.rotZZOn = false;
 
 	this.rotXXSpeed = 1.0;
-
+	
 	this.rotYYSpeed = 1.0;
-
+	
 	this.rotZZSpeed = 1.0;
-
+	
 	this.rotXXDir = 1;
-
+	
 	this.rotYYDir = 1;
-
+	
 	this.rotZZDir = 1;
-
+	
 	// Material features
+	
+	this.kAmbi = [ 0.2, 0.2, 0.2 ];
+	
+	this.kDiff = [ 0.7, 0.7, 0.7 ];
 
-	this.kAmbi = [0.2, 0.2, 0.2];
-
-	this.kDiff = [0.7, 0.7, 0.7];
-
-	this.kSpec = [0.7, 0.7, 0.7];
+	this.kSpec = [ 0.7, 0.7, 0.7 ];
 
 	this.nPhong = 100;
 }
@@ -82,7 +82,8 @@ function emptyModelFeatures() {
 function singleCheckersModel() {
 
 	var dama = new emptyModelFeatures();
-	var textureCoords2 = [
+	dama.vertices = dama_vertices;
+	dama.texture = [
 
 		// Front face
 		1.0, 1.0,
@@ -119,144 +120,152 @@ function singleCheckersModel() {
 		1.0, 1.0,
 		0.0, 1.0,
 	];
-	dama.texture = textureCoords2;
+	computeVertexNormals(dama.vertices, dama.normals);
 	return dama;
 }
 
 function singleTriangleModel() {
 
 	var triangle = new emptyModelFeatures();
-
+	
 	// Default model has just ONE TRIANGLE
 
 	triangle.vertices = [
 
 		// FRONTAL TRIANGLE
-
-		-0.5, -0.5, 0.5,
-
-		0.5, -0.5, 0.5,
-
-		0.5, 0.5, 0.5,
+		 
+		-0.5, -0.5,  0.5,
+		 
+		 0.5, -0.5,  0.5,
+		 
+		 0.5,  0.5,  0.5,
 	];
 
 	triangle.normals = [
 
 		// FRONTAL TRIANGLE
-
-		0.0, 0.0, 1.0,
-
-		0.0, 0.0, 1.0,
-
-		0.0, 0.0, 1.0,
+		 
+		 0.0,  0.0,  1.0,
+		 
+		 0.0,  0.0,  1.0,
+		 
+		 0.0,  0.0,  1.0,
 	];
 
 	return triangle;
 }
 
 
-function simpleCubeModel() {
-
+function simpleCubeModel( ) {
+	
 	var cube = new emptyModelFeatures();
-
+	
 	cube.vertices = [
 
-		-1.000000, -1.000000, 1.000000,
-		1.000000, 1.000000, 1.000000,
-		-1.000000, 1.000000, 1.000000,
-		-1.000000, -1.000000, 1.000000,
-		1.000000, -1.000000, 1.000000,
-		1.000000, 1.000000, 1.000000,
-		1.000000, -1.000000, 1.000000,
-		1.000000, -1.000000, -1.000000,
-		1.000000, 1.000000, -1.000000,
-		1.000000, -1.000000, 1.000000,
-		1.000000, 1.000000, -1.000000,
-		1.000000, 1.000000, 1.000000,
+		-1.000000, -1.000000,  1.000000, 
+		 1.000000,  1.000000,  1.000000, 
+		-1.000000,  1.000000,  1.000000, 
+		-1.000000, -1.000000,  1.000000,
+		 1.000000, -1.000000,  1.000000, 
+		 1.000000,  1.000000,  1.000000, 
+         1.000000, -1.000000,  1.000000, 
+		 1.000000, -1.000000, -1.000000, 
+		 1.000000,  1.000000, -1.000000, 
+         1.000000, -1.000000,  1.000000, 
+         1.000000,  1.000000, -1.000000, 
+         1.000000,  1.000000,  1.000000, 
+        -1.000000, -1.000000, -1.000000, 
+        -1.000000,  1.000000, -1.000000,
+         1.000000,  1.000000, -1.000000, 
+        -1.000000, -1.000000, -1.000000, 
+         1.000000,  1.000000, -1.000000, 
+         1.000000, -1.000000, -1.000000, 
+        -1.000000, -1.000000, -1.000000, 
+		-1.000000, -1.000000,  1.000000, 
+		-1.000000,  1.000000, -1.000000, 
+		-1.000000, -1.000000,  1.000000, 
+		-1.000000,  1.000000,  1.000000, 
+		-1.000000,  1.000000, -1.000000, 
+		-1.000000,  1.000000, -1.000000, 
+		-1.000000,  1.000000,  1.000000, 
+		 1.000000,  1.000000, -1.000000, 
+		-1.000000,  1.000000,  1.000000, 
+		 1.000000,  1.000000,  1.000000, 
+		 1.000000,  1.000000, -1.000000, 
+		-1.000000, -1.000000,  1.000000, 
 		-1.000000, -1.000000, -1.000000,
-		-1.000000, 1.000000, -1.000000,
-		1.000000, 1.000000, -1.000000,
-		-1.000000, -1.000000, -1.000000,
-		1.000000, 1.000000, -1.000000,
-		1.000000, -1.000000, -1.000000,
-		-1.000000, -1.000000, -1.000000,
-		-1.000000, -1.000000, 1.000000,
-		-1.000000, 1.000000, -1.000000,
-		-1.000000, -1.000000, 1.000000,
-		-1.000000, 1.000000, 1.000000,
-		-1.000000, 1.000000, -1.000000,
-		-1.000000, 1.000000, -1.000000,
-		-1.000000, 1.000000, 1.000000,
-		1.000000, 1.000000, -1.000000,
-		-1.000000, 1.000000, 1.000000,
-		1.000000, 1.000000, 1.000000,
-		1.000000, 1.000000, -1.000000,
-		-1.000000, -1.000000, 1.000000,
-		-1.000000, -1.000000, -1.000000,
-		1.000000, -1.000000, -1.000000,
-		-1.000000, -1.000000, 1.000000,
-		1.000000, -1.000000, -1.000000,
-		1.000000, -1.000000, 1.000000,
+		 1.000000, -1.000000, -1.000000, 
+		-1.000000, -1.000000,  1.000000, 
+		 1.000000, -1.000000, -1.000000, 
+		 1.000000, -1.000000,  1.000000, 	 
 	];
-	computeVertexNormals(cube.vertices, cube.normals);
+
+	computeVertexNormals( cube.vertices, cube.normals );
+
 	return cube;
 }
 
 
-function cubeModel(subdivisionDepth = 0) {
+function cubeModel( subdivisionDepth = 0 ) {
+	
 	var cube = new simpleCubeModel();
-	midPointRefinement(cube.vertices, subdivisionDepth);
-	computeVertexNormals(cube.vertices, cube.normals);
+	
+	midPointRefinement( cube.vertices, subdivisionDepth );
+	
+	computeVertexNormals( cube.vertices, cube.normals );
+	
 	return cube;
 }
 
 
-function simpleTetrahedronModel() {
+function simpleTetrahedronModel( ) {
+	
 	var tetra = new emptyModelFeatures();
-
+	
 	tetra.vertices = [
-		-1.000000, 0.000000, -0.707000,
-		0.000000, 1.000000, 0.707000,
-		1.000000, 0.000000, -0.707000,
-		1.000000, 0.000000, -0.707000,
-		0.000000, 1.000000, 0.707000,
-		0.000000, -1.000000, 0.707000,
-		-1.000000, 0.000000, -0.707000,
-		0.000000, -1.000000, 0.707000,
-		0.000000, 1.000000, 0.707000,
-		-1.000000, 0.000000, -0.707000,
-		1.000000, 0.000000, -0.707000,
-		0.000000, -1.000000, 0.707000,
+
+		-1.000000,  0.000000, -0.707000, 
+         0.000000,  1.000000,  0.707000, 
+         1.000000,  0.000000, -0.707000, 
+         1.000000,  0.000000, -0.707000, 
+         0.000000,  1.000000,  0.707000, 
+         0.000000, -1.000000,  0.707000, 
+        -1.000000,  0.000000, -0.707000, 
+         0.000000, -1.000000,  0.707000, 
+         0.000000,  1.000000,  0.707000, 
+        -1.000000,  0.000000, -0.707000, 
+         1.000000,  0.000000, -0.707000, 
+         0.000000, -1.000000,  0.707000,
 	];
 
-	computeVertexNormals(tetra.vertices, tetra.normals);
+	computeVertexNormals( tetra.vertices, tetra.normals );
 
 	return tetra;
 }
 
 
-function tetrahedronModel(subdivisionDepth = 0) {
-
+function tetrahedronModel( subdivisionDepth = 0 ) {
+	
 	var tetra = new simpleTetrahedronModel();
-
-	midPointRefinement(tetra.vertices, subdivisionDepth);
-
-	computeVertexNormals(tetra.vertices, tetra.normals);
-
+	
+	midPointRefinement( tetra.vertices, subdivisionDepth );
+	
+	computeVertexNormals( tetra.vertices, tetra.normals );
+	
 	return tetra;
 }
 
 
-function sphereModel(subdivisionDepth = 2) {
-
+function sphereModel( subdivisionDepth = 2 ) {
+	
 	var sphere = new simpleCubeModel();
-
-	midPointRefinement(sphere.vertices, subdivisionDepth);
-
-	moveToSphericalSurface(sphere.vertices)
-
-	computeVertexNormals(sphere.vertices, sphere.normals);
-
+	
+	midPointRefinement( sphere.vertices, subdivisionDepth );
+	
+	moveToSphericalSurface( sphere.vertices )
+	
+	computeVertexNormals( sphere.vertices, sphere.normals );
+	
 	return sphere;
 }
 
@@ -269,7 +278,8 @@ function sphereModel(subdivisionDepth = 2) {
 var sceneModels = [];
 
 // Changing Cube to Board
-sceneModels.push(new simpleCubeModel());
+sceneModels.push(cubeModel(3));
+
 
 sceneModels[0].ty = 0;
 sceneModels[0].tz = -0.1;
@@ -281,7 +291,13 @@ var column, row;
 for(row=0; row<8; row++){
 	for(column=0; column<4; column++){
 		if(row % 2 == 0){
-			sceneModels.push(new singleCheckersModel());
+			if(row==3 || row==4){
+				sceneModels.push(new emptyModelFeatures());
+			}
+			else{
+				sceneModels.push(new singleCheckersModel());
+
+			}
 			sceneModels[1+row*4+column].tz = 0.03;
 			sceneModels[1+row*4+column].sz = 0.03;
 
@@ -290,7 +306,12 @@ for(row=0; row<8; row++){
 			sceneModels[1+row*4+column].ty = -0.7 + 0.2 * row;
 		}
 		else if(row % 2 != 0){
-			sceneModels.push(new singleCheckersModel());
+			if(row==3 || row==4){
+				sceneModels.push(new emptyModelFeatures());
+			}
+			else{
+				sceneModels.push(new singleCheckersModel());
+			}
 			sceneModels[1+row*4+column].tz = 0.03;
 			sceneModels[1+row*4+column].sz = 0.03;
 
