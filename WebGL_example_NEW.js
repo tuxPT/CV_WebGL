@@ -15,7 +15,7 @@
 //
 // Global Variables
 //
-
+var selectedCheckerID;
 var gl = null; // WebGL context
 
 var shaderProgram = null;
@@ -502,14 +502,16 @@ function animate() {
 					if(sceneModels[i].translation  == 0.2){
 						sceneModels[i].translation_ON = 0;	
 						sceneModels[i].translation = 0.0;
+						sceneModels[i].translation_Dir = 0;
 					}
-				} else {
+				} else if(sceneModels[i].translation_Dir == -1) {
 					sceneModels[i].ty += 0.2/4;
 					sceneModels[i].tx += 0.2/4;
 					sceneModels[i].translation += 0.2/4;
 					if(sceneModels[i].translation  == 0.2){
 						sceneModels[i].translation_ON = 0;	
 						sceneModels[i].translation = 0.0;
+						sceneModels[i].translation_Dir = 0;
 					}
 				}	
 			}
@@ -740,8 +742,8 @@ function setEventListeners(){
 		
 		
 
-				sceneModels[1].translation_ON = 1;
-				sceneModels[1].translation_Dir = 1;
+				
+				sceneModels[selectedCheckerID].translation_Dir = 1;
 		
 				
 	};    
@@ -751,8 +753,8 @@ function setEventListeners(){
 		
 		
 
-				sceneModels[1].translation_ON = 1;
-				sceneModels[1].translation_Dir = -1;
+				
+				sceneModels[selectedCheckerID].translation_Dir = -1;
 			
 	}; 
 
@@ -761,17 +763,37 @@ function setEventListeners(){
 	checker.addEventListener("click", function(){
 				
 		// Getting the selection
-		
-		var id = list.selectedIndex;
-		var colors =[];
-		var i;
-		for(i= 0; i <= dama_vertices.length;i++){
-			colors[i] = 1.0;
-			colors[i++] = 1.0;
-			colors[i++] = 1.0;
-	
+		var Checkercolor =[];
+		for(var i= 0; i <= dama_vertices.length;i++){
+			Checkercolor[i] = 0.0;	
 		}
-		sceneModels[id].colors = colors; 
+
+		var select = [];
+
+		for(var j= 0; j <= dama_vertices.length;j++){
+			select[j] = 0.0;
+			select[j++] = 1.0;
+			select[j++] = 0.0;
+
+		}
+		var id = checker.selectedIndex;
+		selectedCheckerID = id;
+
+		
+		for(var k = 1; k < sceneModels.length; k++ )
+	    {
+			if((k == id)) {
+				sceneModels[k].colors = select;
+				sceneModels[k].translation_ON = 1;
+				sceneModels[k].translation_Dir = 0;
+			}else{
+				sceneModels[k].colors = Checkercolor;
+				sceneModels[k].translation_ON = 0;
+				sceneModels[k].translation_Dir = 0;
+			}
+		}
+		
+		 
 				
 		
 	});
