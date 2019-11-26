@@ -176,7 +176,7 @@ lightSources[0].setAmbIntensity( 0.2, 0.0, 0.0 );
 
 lightSources[0].switchRotYYOn();
 
-lightSources[0].setRotationSpeed( 1.0 );
+lightSources[0].setRotationSpeed( 0.0 );
 
 // Light source 1
 
@@ -190,5 +190,5 @@ lightSources[1].setAmbIntensity( 0.0, 0.0, 0.2 );
 
 lightSources[1].switchRotYYOn();
 
-lightSources[1].setRotationSpeed( -0.5 );
+lightSources[1].setRotationSpeed( -0.0 );
 

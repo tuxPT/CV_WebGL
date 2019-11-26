@@ -186,11 +186,11 @@ The fragment shader is the same simple one.
 
 		   // Adding the components
 
-		   // neste momento os focos de iluminação nao estam a ser usados
+		   
 
 		   fColor += diffuse + specular;
-		   fColor = vec4(0.0, 0.0, 0.0, 0.0);
-		   fColor = vec4(vColor, 1.0);
+		   //fColor = vec4(0.0, 0.0, 0.0, 0.0);
+		   fColor += vec4(vColor, 1.0);
 	   }
 	}
     

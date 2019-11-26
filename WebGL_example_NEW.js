@@ -396,7 +396,7 @@ function drawScene() {
 	// GLOBAL TRANSFORMATION FOR THE WHOLE SCENE
 	
 	mvMatrix = mult(mvMatrix, translationMatrix( 0, 0, globalTz ));
-	mvMatrix = mult(mvMatrix, rotationXXMatrix(-45));
+	mvMatrix = mult(mvMatrix, rotationXXMatrix(-55));
 	mvMatrix = mult(mvMatrix, rotationZZMatrix(globalAngleZZ))
 
 	
@@ -737,25 +737,13 @@ function setEventListeners(){
 		}
 	};
 	document.getElementById("move-left").onclick = function(){
-		
-
-		
-		
-
-				
-				sceneModels[selectedCheckerID].translation_Dir = 1;
-		
-				
+			
+				sceneModels[selectedCheckerID].translation_Dir = 1;		
 	};    
 	
 	document.getElementById("move-right").onclick = function(){
-		
-		
-		
-
-				
-				sceneModels[selectedCheckerID].translation_Dir = -1;
-			
+					
+				sceneModels[selectedCheckerID].translation_Dir = -1;		
 	}; 
 
 	var checker = document.getElementById("select-checker");
@@ -778,8 +766,7 @@ function setEventListeners(){
 		}
 		var id = checker.selectedIndex;
 		selectedCheckerID = id;
-
-		
+	
 		for(var k = 1; k < sceneModels.length; k++ )
 	    {
 			if((k == id)) {
@@ -791,17 +778,12 @@ function setEventListeners(){
 				sceneModels[k].translation_ON = 0;
 				sceneModels[k].translation_Dir = 0;
 			}
-		}
-		
-		 
-				
-		
+		}	
 	});
 
 	document.getElementById("ZZ-direction-button").onclick = function(){
 		
-		// Switching the direction
-		
+		// Switching the direction	
 		// For every model
 		
 		for(var i = 0; i < sceneModels.length; i++ )
