@@ -24,6 +24,7 @@ var triangleVertexPositionBuffer = null;
 var triangleVertexTextureCoordBuffer;
 	
 var triangleVertexNormalBuffer = null;	
+var triangleVertexColorBuffer = null;
 
 // The GLOBAL transformation parameters
 
@@ -41,7 +42,7 @@ var globalRotationYY_DIR = 1;
 
 var globalRotationYY_SPEED = 1;
 
-var globalRotationZZ_ON = 1;
+var globalRotationZZ_ON = 0;
 
 var globalRotationZZ_DIR = 1;
 
@@ -71,7 +72,9 @@ var elapsedTime = 0;
 
 var frameCount = 0;
 
-var lastfpsTime = new Date().getTime();;
+var lastfpsTime = new Date().getTime();
+
+
 
 
 function countFrames() {
@@ -136,8 +139,20 @@ function initBuffers( model ) {
 	// Associating to the vertex shader
 	
 	gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute, 
-			triangleVertexNormalBuffer.itemSize, 
-			gl.FLOAT, false, 0, 0);	
+	 		triangleVertexNormalBuffer.itemSize, 
+	 		gl.FLOAT, false, 0, 0);	
+
+
+	// colors
+	triangleVertexColorBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.colors), gl.STATIC_DRAW);
+	triangleVertexColorBuffer.itemSize = 3;
+	triangleVertexColorBuffer.numItems = model.colors.length / 3;	
+
+	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
+		triangleVertexColorBuffer.itemSize, 
+		gl.FLOAT, false, 0, 0);  
 
 	/*// Textures
     triangleVertexTextureCoordBuffer = gl.createBuffer();
@@ -476,6 +491,15 @@ function animate() {
 				sceneModels[i].rotAngleZZ += sceneModels[i].rotZZDir * sceneModels[i].rotZZSpeed * (90 * elapsed) / 1000.0;
 			}
 		}
+		for(var i = 0; i < sceneModels.length; i++ )
+	    {
+			if(sceneModels[i].translationXX_ON){
+				sceneModels[i].ty += 0.2/8;
+				if(sceneModels[i].ty >= -0.5){
+					sceneModels[i].translationXX_ON = 0;	
+				}
+			}
+		}
 		
 		// Rotating the light sources
 	
@@ -696,6 +720,17 @@ function setEventListeners(){
 			}	
 		}
 	};
+	document.getElementById("XX-move").onclick = function(){
+		
+		// Switching the direction
+		
+		// For every model
+		
+		
+
+				sceneModels[1].translationXX_ON = 1;
+			
+	};     
 
 	document.getElementById("ZZ-direction-button").onclick = function(){
 		

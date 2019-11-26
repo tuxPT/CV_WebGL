@@ -18,6 +18,8 @@ function emptyModelFeatures() {
 
 	this.vertices = [];
 
+	this.colors = [];
+
 	this.normals = [];
 
 	this.texture = [];
@@ -67,6 +69,8 @@ function emptyModelFeatures() {
 	this.rotYYDir = 1;
 	
 	this.rotZZDir = 1;
+
+	this.translationXX_ON = 0;
 	
 	// Material features
 	
@@ -83,6 +87,12 @@ function singleCheckersModel() {
 
 	var dama = new emptyModelFeatures();
 	dama.vertices = dama_vertices;
+	var colors = [];
+	var i;
+	for(i= 0; i <= dama.vertices.length;i++){
+		colors[i] = 0.0;
+
+	}
 	dama.texture = [
 
 		// Front face
@@ -120,6 +130,7 @@ function singleCheckersModel() {
 		1.0, 1.0,
 		0.0, 1.0,
 	];
+	dama.colors = colors;
 	computeVertexNormals(dama.vertices, dama.normals);
 	return dama;
 }
@@ -209,8 +220,37 @@ function simpleCubeModel( ) {
 function cubeModel( subdivisionDepth = 0 ) {
 	
 	var cube = new simpleCubeModel();
+	var colors = [
+
+		// FRONT FACE
+			
+		1.00,  1.00,  1.00,
+		
+		1.00,  1.00,  1.00,
+		
+		1.00,  1.00,  1.00,
+
+		0.00,  0.00,  0.00,
+		0.00,  0.00,  0.00,
+		0.00,  0.00,  0.00,
+ 			 
+	];
+	//cube.colors = colors;
+
 	
-	midPointRefinement( cube.vertices, subdivisionDepth );
+	midPointRefinement( cube.vertices, cube.colors, subdivisionDepth );
+	
+	var j, k,cindex;
+	cindex = 0;
+	for(j=0; j <= (6); j++){
+		for(k=0; k <= board_color.length; k++){
+
+			cube.colors[cindex] = board_color[k];
+			cindex++;
+		}
+
+
+	}
 	
 	computeVertexNormals( cube.vertices, cube.normals );
 	
@@ -248,7 +288,7 @@ function tetrahedronModel( subdivisionDepth = 0 ) {
 	
 	var tetra = new simpleTetrahedronModel();
 	
-	midPointRefinement( tetra.vertices, subdivisionDepth );
+	midPointRefinement( tetra.vertices, tetra.colors, subdivisionDepth );
 	
 	computeVertexNormals( tetra.vertices, tetra.normals );
 	
@@ -260,7 +300,7 @@ function sphereModel( subdivisionDepth = 2 ) {
 	
 	var sphere = new simpleCubeModel();
 	
-	midPointRefinement( sphere.vertices, subdivisionDepth );
+	midPointRefinement( sphere.vertices,sphere.colors, subdivisionDepth );
 	
 	moveToSphericalSurface( sphere.vertices )
 	
@@ -322,40 +362,4 @@ for(row=0; row<8; row++){
 
 	}
 }
-
-// Model 1 --- Top Right
-
-// sceneModels.push( new simpleCubeModel() );
-
-// sceneModels[1].tx = 0.5; sceneModels[1].ty = 0.5;
-
-// sceneModels[1].sx = sceneModels[1].sy = sceneModels[1].sz = 0.25;
-
-// // Model 2 --- Bottom Right
-
-// sceneModels.push( new tetrahedronModel( 1 ) );
-
-// sceneModels[2].tx = 0.5; sceneModels[2].ty = -0.5;
-
-// sceneModels[2].sx = sceneModels[2].sy = sceneModels[2].sz = 0.25;
-
-// // Model 1 --- Bottom Left
-
-// sceneModels.push( new cubeModel( 1 ) );
-
-// sceneModels[3].tx = -0.5; sceneModels[3].ty = -0.5;
-
-// sceneModels[3].sx = 0.4; sceneModels[3].sy = sceneModels[3].sz = 0.25;
-
-// // Model 4 --- Middle
-
-// sceneModels.push( new simpleCubeModel() );
-
-// sceneModels[4].sx = 0.1; sceneModels[4].sy = 0.75; sceneModels[4].sz = 0.1;
-
-// // Model 5 --- Middle
-
-// sceneModels.push( new sphereModel( 3 ) );
-
-// sceneModels[5].sx = 0.25; sceneModels[5].sy = 0.25; sceneModels[5].sz = 0.25;
 

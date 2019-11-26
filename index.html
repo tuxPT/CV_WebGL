@@ -32,7 +32,9 @@ The fragment shader is the same simple one.
 
 <script id="shader-vs" type="x-shader/x-vertex">
 	
-    attribute vec3 vPosition;
+	attribute vec3 vPosition;
+	
+	attribute vec3 vColor;
 
     uniform mat4 uMVMatrix;
 
@@ -183,8 +185,12 @@ The fragment shader is the same simple one.
            } 
 
 		   // Adding the components
-		
-           fColor += diffuse + specular;
+
+		   // neste momento os focos de iluminação nao estam a ser usados
+
+		   fColor += diffuse + specular;
+		   fColor = vec4(0.0, 0.0, 0.0, 0.0);
+		   fColor = vec4(vColor, 1.0);
 	   }
 	}
     
@@ -207,6 +213,7 @@ The fragment shader is the same simple one.
 
 <!-- The JS files -->
 <script type="application/javascript" src="cylinder.js"></script>
+<script type="application/javascript" src="boardColor.js"></script>
 <!-- Some useful functions for browser compatibility -->
 
 <script type="text/javascript" src="webgl-utils.js"></script>
@@ -280,6 +287,10 @@ The fragment shader is the same simple one.
 	    <button id="ZZ-faster-button">Faster</button>
 
 		</p>
+
+		<p>Move: 
+			
+			<button id="XX-move">Move checker</button>
 		
 		<p>Choose the <b>projection type</b>:
 		

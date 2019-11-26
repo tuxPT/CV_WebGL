@@ -76,6 +76,9 @@ function initShaders( gl ) {
 	
 	shaderProgram.vertexNormalAttribute = gl.getAttribLocation(shaderProgram, "vNormal");
 	gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "vColor");
+	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
 	
 	return shaderProgram;
 }
