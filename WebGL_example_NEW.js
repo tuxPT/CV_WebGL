@@ -493,11 +493,25 @@ function animate() {
 		}
 		for(var i = 0; i < sceneModels.length; i++ )
 	    {
-			if(sceneModels[i].translationXX_ON){
-				sceneModels[i].ty += 0.2/8;
-				if(sceneModels[i].ty >= -0.5){
-					sceneModels[i].translationXX_ON = 0;	
-				}
+			if(sceneModels[i].translation_ON){
+				if(sceneModels[i].translation_Dir == 1){
+
+					sceneModels[i].ty += 0.2/4;
+					sceneModels[i].tx -= 0.2/4;
+					sceneModels[i].translation += 0.2/4;
+					if(sceneModels[i].translation  == 0.2){
+						sceneModels[i].translation_ON = 0;	
+						sceneModels[i].translation = 0.0;
+					}
+				} else {
+					sceneModels[i].ty += 0.2/4;
+					sceneModels[i].tx += 0.2/4;
+					sceneModels[i].translation += 0.2/4;
+					if(sceneModels[i].translation  == 0.2){
+						sceneModels[i].translation_ON = 0;	
+						sceneModels[i].translation = 0.0;
+					}
+				}	
 			}
 		}
 		
@@ -720,17 +734,47 @@ function setEventListeners(){
 			}	
 		}
 	};
-	document.getElementById("XX-move").onclick = function(){
+	document.getElementById("move-left").onclick = function(){
 		
-		// Switching the direction
-		
-		// For every model
+
 		
 		
 
-				sceneModels[1].translationXX_ON = 1;
+				sceneModels[1].translation_ON = 1;
+				sceneModels[1].translation_Dir = 1;
+		
+				
+	};    
+	
+	document.getElementById("move-right").onclick = function(){
+		
+		
+		
+
+				sceneModels[1].translation_ON = 1;
+				sceneModels[1].translation_Dir = -1;
 			
-	};     
+	}; 
+
+	var checker = document.getElementById("select-checker");
+	
+	checker.addEventListener("click", function(){
+				
+		// Getting the selection
+		
+		var id = list.selectedIndex;
+		var colors =[];
+		var i;
+		for(i= 0; i <= dama_vertices.length;i++){
+			colors[i] = 1.0;
+			colors[i++] = 1.0;
+			colors[i++] = 1.0;
+	
+		}
+		sceneModels[id].colors = colors; 
+				
+		
+	});
 
 	document.getElementById("ZZ-direction-button").onclick = function(){
 		

@@ -70,7 +70,9 @@ function emptyModelFeatures() {
 	
 	this.rotZZDir = 1;
 
-	this.translationXX_ON = 0;
+	this.translation_ON = 0;
+	this.translation_Dir = 0;
+	this.translation = 0.0;
 	
 	// Material features
 	
@@ -91,6 +93,7 @@ function singleCheckersModel() {
 	var i;
 	for(i= 0; i <= dama.vertices.length;i++){
 		colors[i] = 0.0;
+		
 
 	}
 	dama.texture = [
@@ -220,23 +223,6 @@ function simpleCubeModel( ) {
 function cubeModel( subdivisionDepth = 0 ) {
 	
 	var cube = new simpleCubeModel();
-	var colors = [
-
-		// FRONT FACE
-			
-		1.00,  1.00,  1.00,
-		
-		1.00,  1.00,  1.00,
-		
-		1.00,  1.00,  1.00,
-
-		0.00,  0.00,  0.00,
-		0.00,  0.00,  0.00,
-		0.00,  0.00,  0.00,
- 			 
-	];
-	//cube.colors = colors;
-
 	
 	midPointRefinement( cube.vertices, cube.colors, subdivisionDepth );
 	
