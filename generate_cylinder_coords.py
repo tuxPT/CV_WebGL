@@ -3,41 +3,43 @@
 import math
 import copy
 
+globalz = 1.0
 def rotate(point, angle):
     x = point[0] * math.cos(angle) - point[1] * math.sin(angle)
     y = point[0] * math.sin(angle) + point[1] * math.cos(angle)
-    return [x, y, 0.4]
+    return [x, y, globalz]
 
 angle = math.radians(10)
-triangle = [[1.0, 0.0, 0.4], rotate([1.0, 0.0], angle), [0.0, 0.0, 0.4] ]
+triangle = [[0.0, 0.0, globalz], [1.0, 0.0, globalz], rotate([1.0, 0.0], angle)  ]
 
 triangles = []
 triangles.append(triangle)
 
-i=1
-while(i<360):
+i=0
+while(i<(360/math.degrees(angle))):
     triangle = triangles[-1].copy()
-    triangle = [[triangle[1][0], triangle[1][1], 0.4], rotate([triangle[1][0], triangle[1][1]], angle), [0.0, 0.0, 0.4] ]
+    triangle = [[0.0, 0.0, globalz], [triangle[2][0], triangle[2][1], globalz], rotate([triangle[2][0], triangle[2][1]], angle)]
     triangles.append(triangle)
     i+=1
 
 
 triangles_bellow = copy.deepcopy(triangles)
 
-for index in range(len(triangles_bellow)):
-    triangles_bellow[index][0][2] = -0.4
-    triangles_bellow[index][1][2] = -0.4
-    triangles_bellow[index][2][2] = -0.4
+for triangle in triangles_bellow:
+    triangle[1] , triangle[2] = triangle[2], triangle[1]
+    triangle[0][2] = -globalz
+    triangle[1][2] = -globalz
+    triangle[2][2] = -globalz
 
 
 triangles.extend(triangles_bellow)
 
 rectangles = []
 
-for i in range(len(triangles)):
-    for ib in range(len(triangles_bellow)):
-        t1 = [triangles[i][0], triangles_bellow[ib][0], triangles_bellow[ib][1]]
-        t2 = [triangles[i][0], triangles_bellow[ib][1], triangles[i][1]]
+for tt in triangles:
+    for tb in triangles_bellow:
+        t1 = [tt[1], tb[2], tb[1]]
+        t2 = [tt[1], tb[1], tt[2]]
         rectangles.append(t1)
         rectangles.append(t2)
 

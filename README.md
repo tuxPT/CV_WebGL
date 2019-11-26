@@ -1,2 +1,3 @@
-# CV_WebGL
-"Computação Visual" course first project
+# How to run
+1. Install busybox
+2. Run "./run"
