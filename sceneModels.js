@@ -85,16 +85,21 @@ function emptyModelFeatures() {
 	this.nPhong = 100;
 }
 
-function singleCheckersModel() {
+function singleCheckersModel(player) {
 
 	var dama = new emptyModelFeatures();
 	dama.vertices = dama_vertices;
-	var colors = [];
 	var i;
+	dama.player = player;
+	var color;
+	if(dama.player === -1){
+		color = 0.10;
+	}
+	else{
+		color = 0.40;
+	}
 	for(i= 0; i <= dama.vertices.length;i++){
-		colors[i] = 0.0;
-		
-
+		dama.colors[i] = color;
 	}
 	dama.texture = [
 
@@ -137,7 +142,6 @@ function singleCheckersModel() {
 	 dama.kDiff = [0.4,0.4,0.4];
 	 dama.kSpec = [0.50,0.50,0.50];
 	 dama.nPhong = 25;
-	dama.colors = colors;
 	computeVertexNormals(dama.vertices, dama.normals);
 	return dama;
 }
@@ -336,12 +340,12 @@ for(row=0; row<8; row++){
 				sceneModels.push(new emptyModelFeatures());
 			}
 			else{
-				sceneModels.push(new singleCheckersModel());
+				if(row < 3){sceneModels.push(new singleCheckersModel(1));}
+				else{sceneModels.push(new singleCheckersModel(-1));}
 
 			}
-			sceneModels[1+row*4+column].tz = 0.03;
-			sceneModels[1+row*4+column].sz = 0.03;
-
+			sceneModels[1+row*4+column].tz = 0.02;
+			sceneModels[1+row*4+column].sz = 0.02;
 			sceneModels[1+row*4+column].sx = sceneModels[1+row*4+column].sy = 0.06;
 			sceneModels[1+row*4+column].tx = -0.7 + 0.4 * column;
 			sceneModels[1+row*4+column].ty = -0.7 + 0.2 * row;
@@ -351,11 +355,11 @@ for(row=0; row<8; row++){
 				sceneModels.push(new emptyModelFeatures());
 			}
 			else{
-				sceneModels.push(new singleCheckersModel());
+				if(row < 3){sceneModels.push(new singleCheckersModel(1));}
+				else{sceneModels.push(new singleCheckersModel(-1));}
 			}
-			sceneModels[1+row*4+column].tz = 0.03;
-			sceneModels[1+row*4+column].sz = 0.03;
-
+			sceneModels[1+row*4+column].tz = 0.02;
+			sceneModels[1+row*4+column].sz = 0.02;
 			sceneModels[1+row*4+column].sx = sceneModels[1+row*4+column].sy = 0.06;
 			sceneModels[1+row*4+column].tx = -0.7 + 0.2 + 0.4 * column;
 			sceneModels[1+row*4+column].ty = -0.7 + 0.2 * row;

@@ -16,7 +16,7 @@
 // Global Variables
 //
 
-var player = 0;
+var player = 1;
 var selectedCheckerID;
 var gl = null; // WebGL context
 
@@ -153,10 +153,10 @@ function initBuffers( model ) {
 	triangleVertexColorBuffer.numItems = model.colors.length / 3;	
 
 	gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, 
-		triangleVertexColorBuffer.itemSize, 
+		triangleVertexColorBuffer.itemSize,
 		gl.FLOAT, false, 0, 0);  
 
-	/*// Textures
+	/* Textures
     triangleVertexTextureCoordBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexTextureCoordBuffer);
  	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.texture), gl.STATIC_DRAW);
@@ -399,7 +399,7 @@ function drawScene() {
 	
 	mvMatrix = mult(mvMatrix, translationMatrix( 0, 0, globalTz ));
 	mvMatrix = mult(mvMatrix, rotationXXMatrix(-55));
-	mvMatrix = mult(mvMatrix, rotationZZMatrix(globalAngleZZ))
+	mvMatrix = mult(mvMatrix, rotationZZMatrix(globalAngleZZ));
 
 	
 	// NEW - Updating the position of the light sources, if required
@@ -474,13 +474,13 @@ function animate() {
 			
 			
 			// nao para exatamente no angulo 180 ??
-			if(globalRotation >= 178.6) {
+			if(parseFloat((globalRotation).toFixed(0)) === 180) {
 				globalRotation = 0.0;
 				globalRotationZZ_ON = 0;
 			}
 			else{
 				globalAngleZZ += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
-				globalRotation += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
+				globalRotation = globalAngleZZ;
 			}
 			
 		}
@@ -503,30 +503,33 @@ function animate() {
 
 				sceneModels[i].rotAngleZZ += sceneModels[i].rotZZDir * sceneModels[i].rotZZSpeed * (90 * elapsed) / 1000.0;
 			}
-		}
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if(sceneModels[i].translation_ON){
-				if(sceneModels[i].translation_Dir == 1){
 
-					sceneModels[i].ty += 0.2/4;
-					sceneModels[i].tx -= 0.2/4;
-					sceneModels[i].translation += 0.2/4;
-					if(sceneModels[i].translation  == 0.2){
-						sceneModels[i].translation_ON = 0;	
-						sceneModels[i].translation = 0.0;
-						sceneModels[i].translation_Dir = 0;
+			if(sceneModels[i].translation_ON){
+				if(parseFloat(sceneModels[i].translation.toFixed(2))  === 0.4){
+					sceneModels[i].translation_ON = 0;
+					sceneModels[i].translation = 0.0;
+					sceneModels[i].translation_Dir = 0;
+					changePlayer();
+				}
+				else{
+					if(sceneModels[i].translation_Dir === 1
+						&& parseFloat((sceneModels[i].tx - 0.2).toFixed(2)) != -0.7
+						&& parseFloat((sceneModels[i].ty + 0.2).toFixed(2)) != 0.7)
+					{
+						sceneModels[i].tz = 0.1 * Math.sin(sceneModels[i].translation/0.4*Math.PI);
+						sceneModels[i].ty += 0.2/8;
+						sceneModels[i].tx -= 0.2/8;
+						sceneModels[i].translation += 0.2/8;
+					} else if(sceneModels[i].translation_Dir === -1
+						&& parseFloat(sceneModels[i].tx.toFixed(2)) != 0.7
+						&& parseFloat(sceneModels[i].ty.toFixed(2)) != 0.7)
+					{
+						sceneModels[i].tz = 0.1 * Math.sin(sceneModels[i].translation/0.4*Math.PI);
+						sceneModels[i].ty += 0.2/8;
+						sceneModels[i].tx += 0.2/8;
+						sceneModels[i].translation += 0.2/8;
 					}
-				} else if(sceneModels[i].translation_Dir == -1) {
-					sceneModels[i].ty += 0.2/4;
-					sceneModels[i].tx += 0.2/4;
-					sceneModels[i].translation += 0.2/4;
-					if(sceneModels[i].translation  == 0.2){
-						sceneModels[i].translation_ON = 0;	
-						sceneModels[i].translation = 0.0;
-						sceneModels[i].translation_Dir = 0;
-					}
-				}	
+				}
 			}
 		}
 		
@@ -548,7 +551,9 @@ function animate() {
 
 
 //----------------------------------------------------------------------------
-
+function roundToTwo(num) {
+	return +(Math.round(num + "e+2")  + "e-2");
+}
 // Timer
 
 function tick() {
@@ -570,20 +575,41 @@ function outputInfos(){
     
 }
 function changePlayer(){
-
+	globalRotationZZ_ON=1.0;
 	if(player == 1){
-		player = 0;
+		player = -1;
 	}else{
 		player = 1;
 	}
 }
 
+// Handling keyboard events
+
+var currentlyPressedKeys = {};
+
+function handleKeys() {
+
+	if (currentlyPressedKeys[33]) {
+	}
+}
+
+
 //----------------------------------------------------------------------------
 
 function setEventListeners(){
-
 	
     // Dropdown list
+	function handleKeyDown(event) {
+		currentlyPressedKeys[event.code] = true;
+	}
+
+	function handleKeyUp(event) {
+		currentlyPressedKeys[event.code] = false;
+	}
+
+	document.onkeydown = handleKeyDown;
+
+	document.onkeyup = handleKeyUp;
 	
 	var projection = document.getElementById("projection-selection");
 	
@@ -788,7 +814,7 @@ function setEventListeners(){
 		var id = checker.selectedIndex;
 		
 		
-		if(player == 1){
+		if(player == -1){
 			
 			id += 20;
 		}
@@ -910,8 +936,8 @@ function initWebGL( canvas ) {
 function runWebGL() {
 	
 	var canvas = document.getElementById("my-canvas");
-	canvas.width = 450;
-	canvas.height = 450;
+	canvas.width = 1920;
+	canvas.height = 1920;
 	initWebGL( canvas );
 
 	shaderProgram = initShaders( gl );

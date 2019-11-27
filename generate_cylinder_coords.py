@@ -9,7 +9,7 @@ def rotate(point, angle):
     y = point[0] * math.sin(angle) + point[1] * math.cos(angle)
     return [x, y, globalz]
 
-angle = math.radians(10)
+angle = math.radians(18)
 triangle = [[0.0, 0.0, globalz], [1.0, 0.0, globalz], rotate([1.0, 0.0], angle)  ]
 
 triangles = []

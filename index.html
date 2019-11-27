@@ -214,7 +214,7 @@ The fragment shader is the same simple one.
 <!-- The JS files -->
 <script type="application/javascript" src="cylinder.js"></script>
 <script type="application/javascript" src="boardColor.js"></script>
-<script type="application/javascript" src="checkersColor.js"></script>
+<!--<script type="application/javascript" src="checkersColor.js"></script>-->
 
 <!-- Some useful functions for browser compatibility -->
 
@@ -245,11 +245,8 @@ The fragment shader is the same simple one.
 </head>
 
 <body onload="runWebGL();">
-	<div class="row" style="display:flex;">
-		<div class="column" style="flex:50%;">
-		<canvas id="my-canvas" style="width:90%;border:1px solid #000000;" ></canvas>
-		</div>
-		<div class="column" style="flex:50%;">
+		<canvas id="my-canvas" style="height:700px;border:1px solid #000000;" ></canvas>
+
 		<!-- NEW --- To show the number of frames per second -->
 		
 		<p id="fps"> fps: </p>
@@ -338,9 +335,7 @@ The fragment shader is the same simple one.
 			<button id="change-player">change player</button>
 		</p>
 		
-		</div>
-	</div>
-	</div>
+
 </body>
 
 </html>
