@@ -133,6 +133,10 @@ function singleCheckersModel() {
 		1.0, 1.0,
 		0.0, 1.0,
 	];
+	 dama.kAmbi = [0,0,0];
+	 dama.kDiff = [0.4,0.4,0.4];
+	 dama.kSpec = [0.50,0.50,0.50];
+	 dama.nPhong = 25;
 	dama.colors = colors;
 	computeVertexNormals(dama.vertices, dama.normals);
 	return dama;

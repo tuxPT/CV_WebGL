@@ -770,11 +770,18 @@ function setEventListeners(){
 		for(var k = 1; k < sceneModels.length; k++ )
 	    {
 			if((k == id)) {
-				sceneModels[k].colors = select;
+				sceneModels[k].kAmbi = [0,0,0];
+				sceneModels[k].kDiff = [1.0,0.00,0.00];
+				sceneModels[k].kSpec = [0.7,0.6,0.6];
+
+				//sceneModels[k].colors = select;
 				sceneModels[k].translation_ON = 1;
 				sceneModels[k].translation_Dir = 0;
 			}else{
-				sceneModels[k].colors = Checkercolor;
+				sceneModels[k].kAmbi = [0,0,0];
+				sceneModels[k].kDiff = [0.4,0.4,0.4];
+				sceneModels[k].kSpec = [0.5,0.5,0.5];
+				//sceneModels[k].colors = Checkercolor;
 				sceneModels[k].translation_ON = 0;
 				sceneModels[k].translation_Dir = 0;
 			}
