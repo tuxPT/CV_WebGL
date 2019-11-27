@@ -15,6 +15,8 @@
 //
 // Global Variables
 //
+
+var player = 0;
 var selectedCheckerID;
 var gl = null; // WebGL context
 
@@ -35,7 +37,7 @@ var globalAngleZZ = 0.0;
 var globalTz = 0.0;
 
 // GLOBAL Animation controls
-
+var globalRotation = 0.0;
 var globalRotationYY_ON = 0;
 
 var globalRotationYY_DIR = 1;
@@ -467,9 +469,20 @@ function animate() {
 			globalAngleYY += globalRotationYY_DIR * globalRotationYY_SPEED * (90 * elapsed) / 1000.0;
 	    }
 
+		
 		if( globalRotationZZ_ON ) {
-
-			globalAngleZZ += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
+			
+			
+			// nao para exatamente no angulo 180 ??
+			if(globalRotation >= 178.6) {
+				globalRotation = 0.0;
+				globalRotationZZ_ON = 0;
+			}
+			else{
+				globalAngleZZ += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
+				globalRotation += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
+			}
+			
 		}
 
 		// For every model --- Local rotations
@@ -555,6 +568,14 @@ function tick() {
 
 function outputInfos(){
     
+}
+function changePlayer(){
+
+	if(player == 1){
+		player = 0;
+	}else{
+		player = 1;
+	}
 }
 
 //----------------------------------------------------------------------------
@@ -765,9 +786,14 @@ function setEventListeners(){
 
 		}
 		var id = checker.selectedIndex;
+		
+		
+		if(player == 1){
+			
+			id += 20;
+		}
 		selectedCheckerID = id;
-	
-		for(var k = 1; k < sceneModels.length; k++ )
+		for(var k=1; k < sceneModels.length; k++ )
 	    {
 			if((k == id)) {
 				sceneModels[k].kAmbi = [0,0,0];
@@ -787,6 +813,14 @@ function setEventListeners(){
 			}
 		}	
 	});
+
+	document.getElementById("change-player").onclick = function(){
+		
+		// For every model
+		
+		globalRotationZZ_ON = 1;
+		changePlayer();
+	};     
 
 	document.getElementById("ZZ-direction-button").onclick = function(){
 		
