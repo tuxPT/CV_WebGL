@@ -476,7 +476,7 @@ function animate() {
 		if( globalRotationZZ_ON ) {
 
 			// nao para exatamente no angulo 180 ??
-			if(globalAngleZZ > n-2 && globalAngleZZ < n) {
+			if(globalAngleZZ > n-2 && globalAngleZZ < n+2) {
 				globalAngleZZ = n;
 				globalRotationZZ_ON = 0;
 				n += 180;
@@ -508,8 +508,8 @@ function animate() {
 				else{
 					// left for player 1 or right for player -1
 					if(sceneModels[i].leftRightTranslation === 1
-						&& parseFloat((sceneModels[i].tx - 0.2).toFixed(2)) != -0.7
-						&& parseFloat((sceneModels[i].ty + 0.2).toFixed(2)) != 0.7)
+						&& parseFloat((sceneModels[i].tx - 0.2).toFixed(2)) >= -0.8
+						&& parseFloat((sceneModels[i].ty + 0.2).toFixed(2)) <= 0.8)
 					{
 						// discover how much units should it move and witch index to delete
 						if(move_units === -1.0) {
@@ -534,8 +534,8 @@ function animate() {
 					}
 					// right for player 1 or left for player -1
 					else if(sceneModels[i].leftRightTranslation === -1
-						&& parseFloat(sceneModels[i].tx.toFixed(2)) != 0.7
-						&& parseFloat(sceneModels[i].ty.toFixed(2)) != 0.7)
+						&& parseFloat((sceneModels[i].tx + 0.2).toFixed(2)) <= 0.8
+						&& parseFloat((sceneModels[i].ty  - 0.2).toFixed(2)) >= -0.8)
 					{
 						// discover how much units should it move
 						if(move_units === -1.0) {
@@ -706,14 +706,18 @@ function setEventListeners(){
 		// Getting the selection
 		var Checkercolor =[];
 		for(var i= 0; i <= dama_vertices.length;i++){
-			Checkercolor[i] = 0.0;	
+			Checkercolor[i] = 0.4;	
+		}
+		var Checkercolor1 =[];
+		for(var i= 0; i <= dama_vertices.length;i++){
+			Checkercolor1[i] = 0.1;	
 		}
 
 		var select = [];
 
 		for(var j= 0; j <= dama_vertices.length;j++){
 			select[j] = 0.0;
-			select[j++] = 1.0;
+			select[j++] = 0.1;
 			select[j++] = 0.0;
 
 		}
@@ -732,16 +736,24 @@ function setEventListeners(){
 				sceneModels[k].kDiff = [1.0,0.00,0.00];
 				sceneModels[k].kSpec = [0.7,0.6,0.6];
 
-				//sceneModels[k].colors = select;
+				sceneModels[k].colors = select;
 				sceneModels[k].translation_ON = 1;
 				sceneModels[k].leftRightTranslation = 0;
 			}else{
 				sceneModels[k].kAmbi = [0,0,0];
 				sceneModels[k].kDiff = [0.4,0.4,0.4];
 				sceneModels[k].kSpec = [0.5,0.5,0.5];
-				//sceneModels[k].colors = Checkercolor;
 				sceneModels[k].translation_ON = 0;
 				sceneModels[k].leftRightTranslation = 0;
+				if (k < 13){
+					sceneModels[k].colors = Checkercolor;
+
+
+				} else{
+
+					sceneModels[k].colors = Checkercolor1;
+
+				}
 			}
 		}	
 	});
