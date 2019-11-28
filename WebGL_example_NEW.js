@@ -16,7 +16,7 @@
 // Global Variables
 //
 
-var player = 1;
+let player = 1;
 var selectedCheckerID;
 var gl = null; // WebGL context
 
@@ -29,7 +29,7 @@ var triangleVertexNormalBuffer = null;
 var triangleVertexColorBuffer = null;
 
 // The GLOBAL transformation parameters
-
+let n = 180;
 var globalAngleYY = 0.0;
 
 var globalAngleZZ = 0.0;
@@ -48,8 +48,12 @@ var globalRotationZZ_ON = 0;
 
 var globalRotationZZ_DIR = 1;
 
-var globalRotationZZ_SPEED = 1;
+var globalRotationZZ_SPEED = 0.50;
 
+var translationSPEED = 0.2;
+
+var move_units = -1.0;
+var index2delete = -1;
 // To allow choosing the way of drawing the model triangles
 
 var primitiveType = null;
@@ -371,7 +375,7 @@ function drawScene() {
 		
 		// Global transformation !!
 		
-		globalTz = -2.5;
+		globalTz = -3;
 
 		// NEW --- The viewer is on (0,0,0)
 		
@@ -432,7 +436,6 @@ function drawScene() {
 	}
 			
 	// Instantianting all scene models
-	
 	for(var i = 0; i < sceneModels.length; i++ )
 	{ 
 		drawModel( sceneModels[i],
@@ -457,90 +460,116 @@ var lastTime = 0;
 function animate() {
 	
 	var timeNow = new Date().getTime();
-	
+
 	if( lastTime != 0 ) {
-		
+
 		var elapsed = timeNow - lastTime;
-		
+
 		// Global rotation
-		
+
 		if( globalRotationYY_ON ) {
 
 			globalAngleYY += globalRotationYY_DIR * globalRotationYY_SPEED * (90 * elapsed) / 1000.0;
 	    }
 
-		
+
 		if( globalRotationZZ_ON ) {
-			
-			
+
 			// nao para exatamente no angulo 180 ??
-			if(parseFloat((globalRotation).toFixed(0)) === 180) {
-				globalRotation = 0.0;
+			if(globalAngleZZ > n-2 && globalAngleZZ < n) {
+				globalAngleZZ = n;
 				globalRotationZZ_ON = 0;
+				n += 180;
 			}
 			else{
 				globalAngleZZ += globalRotationZZ_DIR * globalRotationZZ_SPEED * (90 * elapsed) / 1000.0;
-				globalRotation = globalAngleZZ;
 			}
-			
+
 		}
 
 		// For every model --- Local rotations
-		
-		for(var i = 0; i < sceneModels.length; i++ )
+
+		for(let i = 1; i < sceneModels.length; i++ )
 	    {
-			if( sceneModels[i].rotXXOn ) {
-
-				sceneModels[i].rotAngleXX += sceneModels[i].rotXXDir * sceneModels[i].rotXXSpeed * (90 * elapsed) / 1000.0;
-			}
-
-			if( sceneModels[i].rotYYOn ) {
-
-				sceneModels[i].rotAngleYY += sceneModels[i].rotYYDir * sceneModels[i].rotYYSpeed * (90 * elapsed) / 1000.0;
-			}
-
-			if( sceneModels[i].rotZZOn ) {
-
-				sceneModels[i].rotAngleZZ += sceneModels[i].rotZZDir * sceneModels[i].rotZZSpeed * (90 * elapsed) / 1000.0;
-			}
-
 			if(sceneModels[i].translation_ON){
-				if(parseFloat(sceneModels[i].translation.toFixed(2))  === 0.4){
+				if(parseFloat(sceneModels[i].translation.toFixed(2))  === move_units && move_units > 0.0){
 					sceneModels[i].translation_ON = 0;
 					sceneModels[i].translation = 0.0;
-					sceneModels[i].translation_Dir = 0;
+					sceneModels[i].leftRightTranslation = 0;
+					move_units = -1.0;
+					if(index2delete > 0) {
+						console.log(index2delete);
+						sceneModels.splice(index2delete, 1);
+						index2delete = -1;
+					}
+					index2delete = -1;
 					changePlayer();
 				}
 				else{
-					if(sceneModels[i].translation_Dir === 1
+					// left for player 1 or right for player -1
+					if(sceneModels[i].leftRightTranslation === 1
 						&& parseFloat((sceneModels[i].tx - 0.2).toFixed(2)) != -0.7
 						&& parseFloat((sceneModels[i].ty + 0.2).toFixed(2)) != 0.7)
 					{
-						sceneModels[i].tz = 0.1 * Math.sin(sceneModels[i].translation/0.4*Math.PI);
-						sceneModels[i].ty += 0.2/8;
-						sceneModels[i].tx -= 0.2/8;
-						sceneModels[i].translation += 0.2/8;
-					} else if(sceneModels[i].translation_Dir === -1
+						// discover how much units should it move and witch index to delete
+						if(move_units === -1.0) {
+							let tmp = typeOfMove(sceneModels[i], -0.2, 0.2*sceneModels[i].player);
+							move_units = 0.2 * tmp[0];
+							index2delete = tmp[1];
+						}
+						// reset translation, prevents NaN value
+						if(move_units === 0.0){
+							sceneModels[i].translation_ON = 0;
+							sceneModels[i].translation = 0.0;
+							sceneModels[i].leftRightTranslation = 0;
+							move_units = -1.0;
+						}
+						else {
+							// eliptic translation
+							sceneModels[i].tz = 0.02 + 0.10000 * Math.sin(sceneModels[i].translation / move_units);
+							sceneModels[i].ty += translationSPEED * sceneModels[i].player;
+							sceneModels[i].tx -= translationSPEED;
+							sceneModels[i].translation += translationSPEED;
+						}
+					}
+					// right for player 1 or left for player -1
+					else if(sceneModels[i].leftRightTranslation === -1
 						&& parseFloat(sceneModels[i].tx.toFixed(2)) != 0.7
 						&& parseFloat(sceneModels[i].ty.toFixed(2)) != 0.7)
 					{
-						sceneModels[i].tz = 0.1 * Math.sin(sceneModels[i].translation/0.4*Math.PI);
-						sceneModels[i].ty += 0.2/8;
-						sceneModels[i].tx += 0.2/8;
-						sceneModels[i].translation += 0.2/8;
+						// discover how much units should it move
+						if(move_units === -1.0) {
+							let tmp = typeOfMove(sceneModels[i], 0.2, 0.2*sceneModels[i].player);
+							move_units = 0.2 * tmp[0];
+							index2delete = tmp[1];
+						}
+						// reset translation, prevents NaN value
+						if(move_units === 0.0){
+							sceneModels[i].translation_ON = 0;
+							sceneModels[i].translation = 0.0;
+							sceneModels[i].leftRightTranslation = 0;
+							move_units = -1.0;
+						}
+						else {
+							// eliptic translation
+							sceneModels[i].tz = 0.02 + 0.100000 * Math.sin(sceneModels[i].translation / move_units);
+							sceneModels[i].ty += translationSPEED * sceneModels[i].player;
+							sceneModels[i].tx += translationSPEED;
+							sceneModels[i].translation += translationSPEED;
+						}
 					}
 				}
 			}
 		}
-		
+
 		// Rotating the light sources
-	
-		for(var i = 0; i < lightSources.length; i++ )
+
+		for(let i = 0; i < lightSources.length; i++ )
 	    {
 			if( lightSources[i].isRotYYOn() ) {
 
-				var angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
-		
+				let angle = lightSources[i].getRotAngleYY() + lightSources[i].getRotationSpeed() * (90 * elapsed) / 1000.0;
+
 				lightSources[i].setRotAngleYY( angle );
 			}
 		}
@@ -551,9 +580,7 @@ function animate() {
 
 
 //----------------------------------------------------------------------------
-function roundToTwo(num) {
-	return +(Math.round(num + "e+2")  + "e-2");
-}
+
 // Timer
 
 function tick() {
@@ -575,12 +602,38 @@ function outputInfos(){
     
 }
 function changePlayer(){
-	globalRotationZZ_ON=1.0;
-	if(player == 1){
+	if(player === 1){
 		player = -1;
 	}else{
 		player = 1;
 	}
+	globalRotationZZ_ON=1;
+}
+
+function typeOfMove(model, dx, dy){
+	// verify if there is a dama at the proposed position
+	for(let i = 1; i<sceneModels.length; i++){
+		//there is a dama at the position
+		if(model.tx + dx === sceneModels[i].tx && model.ty + dy === sceneModels[i].ty){
+			// dama is from another player
+			if(model.player !== sceneModels[i].player){
+				for(let j=1; j<sceneModels.length; j++){
+					// can't eat
+					if(model.tx + 2*dx === sceneModels[j].tx && model.ty + 2*dy === sceneModels[j].ty){
+						return [0.0, -1];
+					}
+				}
+				// can eat and move 2 times the proposed position
+				return [2.0, i];
+			}
+			// a player dama can't move
+			else{
+				return [0.0, -1];
+			}
+		}
+	}
+	// no dama at the proposed position
+	return [1.0, -1];
 }
 
 // Handling keyboard events
@@ -610,24 +663,7 @@ function setEventListeners(){
 	document.onkeydown = handleKeyDown;
 
 	document.onkeyup = handleKeyUp;
-	
-	var projection = document.getElementById("projection-selection");
-	
-	projection.addEventListener("click", function(){
-				
-		// Getting the selection
-		
-		var p = projection.selectedIndex;
-				
-		switch(p){
-			
-			case 0 : projectionType = 0;
-				break;
-			
-			case 1 : projectionType = 1;
-				break;
-		}  	
-	});      
+
 
 	// Dropdown list
 	
@@ -653,144 +689,14 @@ function setEventListeners(){
 	});      
 
 	// Button events
-	
-	document.getElementById("XX-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotXXOn ) {
 
-				sceneModels[i].rotXXOn = false;
-			}
-			else {
-				sceneModels[i].rotXXOn = true;
-			}	
-		}
-	};
-
-	document.getElementById("XX-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotXXDir == 1 ) {
-
-				sceneModels[i].rotXXDir = -1;
-			}
-			else {
-				sceneModels[i].rotXXDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("XX-slower-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotXXSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("XX-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotXXSpeed *= 1.25; 
-		}
-	};      
-
-	document.getElementById("YY-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotYYOn ) {
-
-				sceneModels[i].rotYYOn = false;
-			}
-			else {
-				sceneModels[i].rotYYOn = true;
-			}	
-		}
-	};
-
-	document.getElementById("YY-direction-button").onclick = function(){
-		
-		// Switching the direction
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotYYDir == 1 ) {
-
-				sceneModels[i].rotYYDir = -1;
-			}
-			else {
-				sceneModels[i].rotYYDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("YY-slower-button").onclick = function(){
-
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotYYSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("YY-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotYYSpeed *= 1.25; 
-		}
-	};      
-
-	document.getElementById("ZZ-on-off-button").onclick = function(){
-		
-		// Switching on / off
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotZZOn ) {
-
-				sceneModels[i].rotZZOn = false;
-			}
-			else {
-				sceneModels[i].rotZZOn = true;
-			}	
-		}
-	};
 	document.getElementById("move-left").onclick = function(){
-			
-				sceneModels[selectedCheckerID].translation_Dir = 1;		
+		sceneModels[selectedCheckerID].leftRightTranslation = 1 * player;
 	};    
 	
 	document.getElementById("move-right").onclick = function(){
 					
-				sceneModels[selectedCheckerID].translation_Dir = -1;		
+				sceneModels[selectedCheckerID].leftRightTranslation = -1 * player;
 	}; 
 
 	var checker = document.getElementById("select-checker");
@@ -816,7 +722,7 @@ function setEventListeners(){
 		
 		if(player == -1){
 			
-			id += 20;
+			id += 12;
 		}
 		selectedCheckerID = id;
 		for(var k=1; k < sceneModels.length; k++ )
@@ -828,62 +734,19 @@ function setEventListeners(){
 
 				//sceneModels[k].colors = select;
 				sceneModels[k].translation_ON = 1;
-				sceneModels[k].translation_Dir = 0;
+				sceneModels[k].leftRightTranslation = 0;
 			}else{
 				sceneModels[k].kAmbi = [0,0,0];
 				sceneModels[k].kDiff = [0.4,0.4,0.4];
 				sceneModels[k].kSpec = [0.5,0.5,0.5];
 				//sceneModels[k].colors = Checkercolor;
 				sceneModels[k].translation_ON = 0;
-				sceneModels[k].translation_Dir = 0;
+				sceneModels[k].leftRightTranslation = 0;
 			}
 		}	
 	});
 
-	document.getElementById("change-player").onclick = function(){
-		
-		// For every model
-		
-		globalRotationZZ_ON = 1;
-		changePlayer();
-	};     
 
-	document.getElementById("ZZ-direction-button").onclick = function(){
-		
-		// Switching the direction	
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			if( sceneModels[i].rotZZDir == 1 ) {
-
-				sceneModels[i].rotZZDir = -1;
-			}
-			else {
-				sceneModels[i].rotZZDir = 1;
-			}	
-		}
-	};      
-
-	document.getElementById("ZZ-slower-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotZZSpeed *= 0.75; 
-		}
-	};      
-
-	document.getElementById("ZZ-faster-button").onclick = function(){
-		
-		// For every model
-		
-		for(var i = 0; i < sceneModels.length; i++ )
-	    {
-			sceneModels[i].rotZZSpeed *= 1.25; 
-		}
-	};      
 }
 
 //----------------------------------------------------------------------------

@@ -71,9 +71,9 @@ function emptyModelFeatures() {
 	this.rotZZDir = 1;
 
 	this.translation_ON = 0;
-	this.translation_Dir = 0;
-	this.translation = 0.0;
-	
+	this.leftRightTranslation = 0;
+	this.translation = 0;
+
 	// Material features
 	
 	this.kAmbi = [ 0.2, 0.2, 0.2 ];
@@ -332,37 +332,38 @@ sceneModels[0].sx = 0.80;
 sceneModels[0].sy = 0.80;
 sceneModels[0].sz = 0.1;
 
-var column, row;
+let column, row;
 for(row=0; row<8; row++){
 	for(column=0; column<4; column++){
 		if(row % 2 == 0){
 			if(row==3 || row==4){
-				sceneModels.push(new emptyModelFeatures());
+				continue;
 			}
 			else{
 				if(row < 3){sceneModels.push(new singleCheckersModel(1));}
 				else{sceneModels.push(new singleCheckersModel(-1));}
-
+				sceneModels[sceneModels.length -1].tz = 0.02;
+				sceneModels[sceneModels.length -1].sz = 0.02;
+				sceneModels[sceneModels.length -1].sx = sceneModels[sceneModels.length -1].sy = 0.06;
+				sceneModels[sceneModels.length -1].tx = -0.7 + 0.4 * column;
+				sceneModels[sceneModels.length -1].ty = -0.7 + 0.2 * row;
 			}
-			sceneModels[1+row*4+column].tz = 0.02;
-			sceneModels[1+row*4+column].sz = 0.02;
-			sceneModels[1+row*4+column].sx = sceneModels[1+row*4+column].sy = 0.06;
-			sceneModels[1+row*4+column].tx = -0.7 + 0.4 * column;
-			sceneModels[1+row*4+column].ty = -0.7 + 0.2 * row;
+
 		}
 		else if(row % 2 != 0){
 			if(row==3 || row==4){
-				sceneModels.push(new emptyModelFeatures());
+				continue;
 			}
 			else{
 				if(row < 3){sceneModels.push(new singleCheckersModel(1));}
 				else{sceneModels.push(new singleCheckersModel(-1));}
+				sceneModels[sceneModels.length -1].tz = 0.02;
+				sceneModels[sceneModels.length -1].sz = 0.02;
+				sceneModels[sceneModels.length -1].sx = sceneModels[sceneModels.length -1].sy = 0.06;
+				sceneModels[sceneModels.length -1].tx = -0.7 + 0.2 + 0.4 * column;
+				sceneModels[sceneModels.length -1].ty = -0.7 + 0.2 * row;
 			}
-			sceneModels[1+row*4+column].tz = 0.02;
-			sceneModels[1+row*4+column].sz = 0.02;
-			sceneModels[1+row*4+column].sx = sceneModels[1+row*4+column].sy = 0.06;
-			sceneModels[1+row*4+column].tx = -0.7 + 0.2 + 0.4 * column;
-			sceneModels[1+row*4+column].ty = -0.7 + 0.2 * row;
+
 		}
 
 	}
