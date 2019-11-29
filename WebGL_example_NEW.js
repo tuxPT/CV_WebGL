@@ -689,20 +689,20 @@ function setEventListeners(){
 				
 		// Getting the selection
 		var Checkercolor =[];
-		for(var i= 0; i <= dama_vertices.length;i++){
+		for(var i= 0; i < dama_vertices.length;i++){
 			Checkercolor[i] = 0.4;	
 		}
 		var Checkercolor1 =[];
-		for(var i= 0; i <= dama_vertices.length;i++){
+		for(var i= 0; i < dama_vertices.length;i++){
 			Checkercolor1[i] = 0.1;	
 		}
 
 		var select = [];
 
-		for(var j= 0; j <= dama_vertices.length;j++){
-			select[j] = 0.0;
+		for(var j= 0; j < dama_vertices.length;j++){
 			select[j++] = 0.1;
 			select[j++] = 0.0;
+			select[j] = 0.0;
 
 		}
 		var id = checker.selectedIndex;

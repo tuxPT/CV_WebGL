@@ -236,18 +236,22 @@ function cubeModel( subdivisionDepth = 0 ) {
 	
 	var j, k,cindex;
 	cindex = 0;
-	for(j=0; j <= (6); j++){
+	for(j=0; j < (5); j++){
 		if(j > 0){
-			for(k=0; k <= board_color.length/3 ; k++){
+			for(k=0; k < board_color.length; k++){
 
-				cube.colors[cindex++] = 0.263;
-				cube.colors[cindex++] = 0.129;
-				cube.colors[cindex++] = 0.396;
-				//cindex;
+				
+				cube.colors[cindex] = 0.396;
+				cindex++;		
+				cube.colors[cindex] = 0.263;
+				cindex++;
+				cube.colors[cindex] = 0.129;
+				cindex++;
 			}
 			
+			
 		}else{
-			for(k=0; k <= board_color.length; k++){
+			for(k=0; k < board_color.length; k++){
 
 				cube.colors[cindex] = board_color[k];
 				cindex++;
