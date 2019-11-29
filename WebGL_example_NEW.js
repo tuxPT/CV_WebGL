@@ -17,6 +17,7 @@
 //
 
 let player = 1;
+let leftRight = 0;
 var selectedCheckerID;
 var gl = null; // WebGL context
 
@@ -50,7 +51,7 @@ var globalRotationZZ_DIR = 1;
 
 var globalRotationZZ_SPEED = 0.50;
 
-var translationSPEED = 0.2;
+var translationSPEED = 0.1;
 
 var move_units = -1.0;
 var index2delete = -1;
@@ -220,12 +221,6 @@ function drawModel( model,
     // Pay attention to transformation order !!
     
 	mvMatrix = mult( mvMatrix, translationMatrix( model.tx, model.ty, model.tz ) );
-						 
-	mvMatrix = mult( mvMatrix, rotationZZMatrix( model.rotAngleZZ ) );
-	
-	mvMatrix = mult( mvMatrix, rotationYYMatrix( model.rotAngleYY ) );
-	
-	mvMatrix = mult( mvMatrix, rotationXXMatrix( model.rotAngleXX ) );
 	
 	mvMatrix = mult( mvMatrix, scalingMatrix( model.sx, model.sy, model.sz ) );
 						 
@@ -492,72 +487,38 @@ function animate() {
 		for(let i = 1; i < sceneModels.length; i++ )
 	    {
 			if(sceneModels[i].translation_ON){
-				if(parseFloat(sceneModels[i].translation.toFixed(2))  === move_units && move_units > 0.0){
+				if(sceneModels[i].translation.toFixed(1)  === move_units.toFixed(1) && move_units.toFixed(1) > 0.0){
 					sceneModels[i].translation_ON = 0;
 					sceneModels[i].translation = 0.0;
-					sceneModels[i].leftRightTranslation = 0;
+					leftRight = 0;
 					move_units = -1.0;
 					if(index2delete > 0) {
 						console.log(index2delete);
 						sceneModels.splice(index2delete, 1);
-						index2delete = -1;
 					}
 					index2delete = -1;
 					changePlayer();
 				}
 				else{
-					// left for player 1 or right for player -1
-					if(sceneModels[i].leftRightTranslation === 1
-						&& parseFloat((sceneModels[i].tx - 0.2).toFixed(2)) >= -0.8
-						&& parseFloat((sceneModels[i].ty + 0.2).toFixed(2)) <= 0.8)
-					{
-						// discover how much units should it move and witch index to delete
+					// discover how much units should it move and witch index to delete
+					if(Math.abs(leftRight)){
 						if(move_units === -1.0) {
-							let tmp = typeOfMove(sceneModels[i], -0.2, 0.2*sceneModels[i].player);
+							let tmp = typeOfMove(sceneModels[i], 0.2 * leftRight, 0.2 * sceneModels[i].player);
+							console.log(tmp);
 							move_units = 0.2 * tmp[0];
 							index2delete = tmp[1];
+							const can_move = insideLimits(sceneModels[i], move_units * leftRight, move_units * sceneModels[i].player);
+							if (move_units === 0.0 || !can_move) {
+								sceneModels[i].translation_ON = 0;
+								sceneModels[i].translation = 0.0;
+								move_units = -1.0;
+								index2delete = -1;
+								continue;
+							}
 						}
-						// reset translation, prevents NaN value
-						if(move_units === 0.0){
-							sceneModels[i].translation_ON = 0;
-							sceneModels[i].translation = 0.0;
-							sceneModels[i].leftRightTranslation = 0;
-							move_units = -1.0;
-						}
-						else {
-							// eliptic translation
-							sceneModels[i].tz = 0.02 + 0.10000 * Math.sin(sceneModels[i].translation / move_units);
-							sceneModels[i].ty += translationSPEED * sceneModels[i].player;
-							sceneModels[i].tx -= translationSPEED;
-							sceneModels[i].translation += translationSPEED;
-						}
+						moveAnimation(sceneModels[i]);
 					}
-					// right for player 1 or left for player -1
-					else if(sceneModels[i].leftRightTranslation === -1
-						&& parseFloat((sceneModels[i].tx + 0.2).toFixed(2)) <= 0.8
-						&& parseFloat((sceneModels[i].ty  - 0.2).toFixed(2)) >= -0.8)
-					{
-						// discover how much units should it move
-						if(move_units === -1.0) {
-							let tmp = typeOfMove(sceneModels[i], 0.2, 0.2*sceneModels[i].player);
-							move_units = 0.2 * tmp[0];
-							index2delete = tmp[1];
-						}
-						// reset translation, prevents NaN value
-						if(move_units === 0.0){
-							sceneModels[i].translation_ON = 0;
-							sceneModels[i].translation = 0.0;
-							sceneModels[i].leftRightTranslation = 0;
-							move_units = -1.0;
-						}
-						else {
-							// eliptic translation
-							sceneModels[i].tz = 0.02 + 0.100000 * Math.sin(sceneModels[i].translation / move_units);
-							sceneModels[i].ty += translationSPEED * sceneModels[i].player;
-							sceneModels[i].tx += translationSPEED;
-							sceneModels[i].translation += translationSPEED;
-						}
-					}
+
 				}
 			}
 		}
@@ -610,16 +571,38 @@ function changePlayer(){
 	globalRotationZZ_ON=1;
 }
 
+function insideLimits(model, dx, dy){
+	return -0.8 < model.tx + dx && model.tx + dx < 0.8 && -0.8 < model.ty + dy && model.ty + dy < 0.8;
+}
+
+function moveAnimation(model){
+	console.log("chega aqui");
+	model.ty += translationSPEED * model.player;
+	model.tx += translationSPEED * leftRight;
+	model.translation += translationSPEED;
+	model.tz = 0.02 + 0.8 * Math.sin(model.translation/move_units*Math.PI);
+}
+
 function typeOfMove(model, dx, dy){
+	let tx = model.tx;
+	let ty = model.ty;
 	// verify if there is a dama at the proposed position
 	for(let i = 1; i<sceneModels.length; i++){
 		//there is a dama at the position
-		if(model.tx + dx === sceneModels[i].tx && model.ty + dy === sceneModels[i].ty){
+		/*console.log(tx + dx);
+		console.log(sceneModels[i].tx);
+		console.log(ty + dy);
+		console.log(sceneModels[i].ty);
+		console.log("separaador");*/
+		if((tx + dx).toFixed(1) === sceneModels[i].tx.toFixed(1) && (ty + dy).toFixed(1) === sceneModels[i].ty.toFixed(1)){
+			console.log("peça seguinte pode ser comida");
 			// dama is from another player
-			if(model.player !== sceneModels[i].player){
+			if(player !== sceneModels[i].player){
+				console.log("peça de player diferente");
 				for(let j=1; j<sceneModels.length; j++){
 					// can't eat
-					if(model.tx + 2*dx === sceneModels[j].tx && model.ty + 2*dy === sceneModels[j].ty){
+					if((tx + 2*dx).toFixed(1) === sceneModels[j].tx.toFixed(1) && (ty + 2*dy).toFixed(1) === sceneModels[j].ty.toFixed(1)){
+						console.log("sem peça em duas unidades");
 						return [0.0, -1];
 					}
 				}
@@ -691,13 +674,14 @@ function setEventListeners(){
 	// Button events
 
 	document.getElementById("move-left").onclick = function(){
-		sceneModels[selectedCheckerID].leftRightTranslation = 1 * player;
+		leftRight = -1 * player;
+		console.log("leftRight:"+leftRight);
 	};    
 	
 	document.getElementById("move-right").onclick = function(){
-					
-				sceneModels[selectedCheckerID].leftRightTranslation = -1 * player;
-	}; 
+		leftRight = player;
+		console.log("leftRight:"+leftRight);
+	};
 
 	var checker = document.getElementById("select-checker");
 	
@@ -738,13 +722,11 @@ function setEventListeners(){
 
 				sceneModels[k].colors = select;
 				sceneModels[k].translation_ON = 1;
-				sceneModels[k].leftRightTranslation = 0;
 			}else{
 				sceneModels[k].kAmbi = [0,0,0];
 				sceneModels[k].kDiff = [0.4,0.4,0.4];
 				sceneModels[k].kSpec = [0.5,0.5,0.5];
 				sceneModels[k].translation_ON = 0;
-				sceneModels[k].leftRightTranslation = 0;
 				if (k < 13){
 					sceneModels[k].colors = Checkercolor;
 
